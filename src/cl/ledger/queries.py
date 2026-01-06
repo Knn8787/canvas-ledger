@@ -6,12 +6,13 @@ Queries merge observed data with declared annotations where applicable.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
 from sqlmodel import Session, select
 
+from cl.annotations.models import InvolvementAnnotation, LeadInstructorAnnotation
 from cl.ledger.models import Offering, Term, UserEnrollment
 from cl.ledger.store import get_session
 
@@ -21,7 +22,11 @@ if TYPE_CHECKING:
 
 @dataclass
 class TimelineEntry:
-    """A single entry in the user's involvement timeline."""
+    """A single entry in the user's involvement timeline.
+
+    Contains both observed data (from Canvas) and declared data (from annotations).
+    The distinction is made explicit through separate fields.
+    """
 
     canvas_course_id: int
     offering_name: str
@@ -29,10 +34,13 @@ class TimelineEntry:
     workflow_state: str
     term_name: str | None
     term_start_date: datetime | None
-    roles: list[str]  # User's roles in this offering
+    # Observed data from Canvas
+    roles: list[str]  # User's observed Canvas roles in this offering
     enrollment_states: list[str]  # States for each enrollment
     observed_at: datetime
     last_seen_at: datetime
+    # Declared data from annotations
+    declared_involvement: str | None = None  # From InvolvementAnnotation
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -43,10 +51,38 @@ class TimelineEntry:
             "workflow_state": self.workflow_state,
             "term_name": self.term_name,
             "term_start_date": (self.term_start_date.isoformat() if self.term_start_date else None),
-            "roles": self.roles,
+            "observed_roles": self.roles,
             "enrollment_states": self.enrollment_states,
+            "declared_involvement": self.declared_involvement,
             "observed_at": self.observed_at.isoformat() if self.observed_at else None,
             "last_seen_at": self.last_seen_at.isoformat() if self.last_seen_at else None,
+        }
+
+
+@dataclass
+class OfferingResponsibility:
+    """Responsibility information for an offering.
+
+    Combines observed Canvas data with declared annotations to show
+    who is responsible for the course.
+    """
+
+    canvas_course_id: int
+    offering_name: str
+    offering_code: str | None
+    # Observed data from Canvas enrollments (for user's own roles)
+    observed_instructors: list[dict[str, Any]] = field(default_factory=list)
+    # Declared data from annotations
+    declared_lead: dict[str, Any] | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "canvas_course_id": self.canvas_course_id,
+            "offering_name": self.offering_name,
+            "offering_code": self.offering_code,
+            "observed_instructors": self.observed_instructors,
+            "declared_lead": self.declared_lead,
         }
 
 
@@ -58,7 +94,8 @@ def get_my_timeline(
     """Get the user's involvement timeline.
 
     Returns all offerings the user has enrollments in, sorted by term
-    (most recent first) then by offering name.
+    (most recent first) then by offering name. Includes both observed
+    roles from Canvas and declared involvement from annotations.
 
     Args:
         db_path: Path to the SQLite database.
@@ -111,6 +148,12 @@ def _get_my_timeline_impl(
         offerings_map[course_id]["roles"].append(enrollment.role)
         offerings_map[course_id]["enrollment_states"].append(enrollment.enrollment_state)
 
+    # Get all involvement annotations and build a lookup
+    inv_stmt = select(InvolvementAnnotation)
+    involvement_annotations = {
+        ann.offering_canvas_id: ann.classification for ann in session.exec(inv_stmt).all()
+    }
+
     # Convert to TimelineEntry objects
     entries: list[TimelineEntry] = []
 
@@ -130,6 +173,7 @@ def _get_my_timeline_impl(
                 enrollment_states=data["enrollment_states"],
                 observed_at=offering.observed_at,
                 last_seen_at=offering.last_seen_at,
+                declared_involvement=involvement_annotations.get(course_id),
             )
         )
 
@@ -144,6 +188,84 @@ def _get_my_timeline_impl(
     entries.sort(key=sort_key)
 
     return entries
+
+
+def get_offering_responsibility(
+    db_path: Path | str,
+    canvas_course_id: int,
+) -> OfferingResponsibility | None:
+    """Get responsibility information for an offering.
+
+    Returns both observed instructors (from Canvas UserEnrollment with role=teacher)
+    and declared lead instructor (from LeadInstructorAnnotation).
+
+    Note: In Phase 2, this uses only UserEnrollment (the user's own enrollments).
+    Full instructor list from all enrollments will be available in Phase 3.
+
+    Args:
+        db_path: Path to the SQLite database.
+        canvas_course_id: Canvas course ID.
+
+    Returns:
+        OfferingResponsibility object or None if offering not found.
+    """
+    with get_session(db_path) as session:
+        # Get the offering
+        stmt = select(Offering).where(Offering.canvas_course_id == canvas_course_id)
+        offering = session.exec(stmt).first()
+
+        if offering is None:
+            return None
+
+        # Get observed instructors from UserEnrollment (user's own enrollments with instructor roles)
+        # Canvas API returns enrollment types like "TeacherEnrollment", "TaEnrollment", etc.
+        instructor_roles = {
+            "TeacherEnrollment",
+            "TaEnrollment",
+            "DesignerEnrollment",
+            "teacher",
+            "ta",
+            "designer",  # Also support lowercase variants
+        }
+        enrollment_stmt = (
+            select(UserEnrollment)
+            .where(UserEnrollment.offering_id == offering.id)
+            .where(UserEnrollment.role.in_(instructor_roles))  # type: ignore[attr-defined]
+        )
+        enrollments = session.exec(enrollment_stmt).all()
+
+        observed_instructors = [
+            {
+                "role": e.role,
+                "enrollment_state": e.enrollment_state,
+                "source": "user_enrollment",  # Indicates this is the current user
+            }
+            for e in enrollments
+        ]
+
+        # Get declared lead instructor
+        lead_stmt = select(LeadInstructorAnnotation).where(
+            LeadInstructorAnnotation.offering_canvas_id == canvas_course_id
+        )
+        lead_annotation = session.exec(lead_stmt).first()
+
+        declared_lead = None
+        if lead_annotation:
+            declared_lead = {
+                "person_canvas_id": lead_annotation.person_canvas_id,
+                "designation": lead_annotation.designation.value,
+                "created_at": lead_annotation.created_at.isoformat()
+                if lead_annotation.created_at
+                else None,
+            }
+
+        return OfferingResponsibility(
+            canvas_course_id=canvas_course_id,
+            offering_name=offering.name,
+            offering_code=offering.code,
+            observed_instructors=observed_instructors,
+            declared_lead=declared_lead,
+        )
 
 
 def get_all_offerings(

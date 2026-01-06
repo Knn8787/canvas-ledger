@@ -5,6 +5,8 @@ Provides the root Typer application with version flag and error handling.
 
 from __future__ import annotations
 
+from typing import Never
+
 import typer
 
 from cl import __version__
@@ -45,7 +47,7 @@ def main(
     pass
 
 
-def cli_error(message: str, exit_code: int = 1) -> None:
+def cli_error(message: str, exit_code: int = 1) -> Never:
     """Print error message to stderr and exit."""
     typer.secho(f"Error: {message}", fg=typer.colors.RED, err=True)
     raise typer.Exit(exit_code)
@@ -63,13 +65,14 @@ def cli_warning(message: str) -> None:
 
 # Import and register command groups
 # These imports are at the bottom to avoid circular imports
-from cl.cli import config_cmd, db_cmd, export_cmd, ingest_cmd, query_cmd  # noqa: E402
+from cl.cli import annotate_cmd, config_cmd, db_cmd, export_cmd, ingest_cmd, query_cmd  # noqa: E402
 
 app.add_typer(config_cmd.app, name="config")
 app.add_typer(db_cmd.app, name="db")
 app.add_typer(ingest_cmd.app, name="ingest")  # type: ignore[has-type]
 app.add_typer(query_cmd.app, name="query")  # type: ignore[has-type]
 app.add_typer(export_cmd.app, name="export")  # type: ignore[has-type]
+app.add_typer(annotate_cmd.app, name="annotate")  # type: ignore[has-type]
 
 
 if __name__ == "__main__":

@@ -223,7 +223,8 @@ class TestTimelineEntry:
         assert data["offering_code"] == "TST101"
         assert data["workflow_state"] == "available"
         assert data["term_name"] == "Fall 2024"
-        assert data["roles"] == ["teacher", "designer"]
+        assert data["observed_roles"] == ["teacher", "designer"]  # Renamed from 'roles' in Phase 2
+        assert "declared_involvement" in data  # Added in Phase 2
         assert "term_start_date" in data
         assert "observed_at" in data
         assert "last_seen_at" in data

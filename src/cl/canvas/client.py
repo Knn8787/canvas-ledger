@@ -152,9 +152,7 @@ class CanvasClient:
                 # Skip courses with restricted access (no details available)
                 if getattr(course, "access_restricted_by_date", False):
                     skipped_count += 1
-                    logger.warning(
-                        "Skipping course %s: access restricted by date", course.id
-                    )
+                    logger.warning("Skipping course %s: access restricted by date", course.id)
                     continue
 
                 # Extract term ID if available
@@ -182,9 +180,7 @@ class CanvasClient:
                 )
 
             if skipped_count > 0:
-                logger.info(
-                    "Skipped %d course(s) due to date-restricted access", skipped_count
-                )
+                logger.info("Skipped %d course(s) due to date-restricted access", skipped_count)
 
             return result
 

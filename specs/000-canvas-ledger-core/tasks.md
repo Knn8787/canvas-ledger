@@ -201,17 +201,17 @@
 
 ### Annotation Models
 
-- [ ] T037 [P2] Design and implement annotation SQLModel models in `src/cl/annotations/models.py`:
+- [X] T037 [P2] Design and implement annotation SQLModel models in `src/cl/annotations/models.py`:
   - `AnnotationBase`: common fields (id, created_at, updated_at, annotation_type)
   - `LeadInstructorAnnotation`: offering_canvas_id, person_canvas_id, designation (lead | grade_responsible)
   - `InvolvementAnnotation`: offering_canvas_id, classification (free text or enum TBD)
   - Reference entities by Canvas IDs (not internal FKs) so annotations survive offering re-ingestion
   - Review schema design
-- [ ] T038 [P2] Create Alembic migration (003) for annotation tables
+- [X] T038 [P2] Create Alembic migration (003) for annotation tables
 
 ### Annotation Manager
 
-- [ ] T039 [P2] Implement annotation CRUD in `src/cl/annotations/manager.py`:
+- [X] T039 [P2] Implement annotation CRUD in `src/cl/annotations/manager.py`:
   - `add_lead_instructor(offering_canvas_id, person_canvas_id, designation)`
   - `add_involvement(offering_canvas_id, classification)`
   - `list_annotations(offering_canvas_id=None)` — filter by offering or list all
@@ -221,7 +221,7 @@
 
 ### Annotation CLI Commands
 
-- [ ] T040 [P2] Implement `cl annotate` command group in `src/cl/cli/annotate_cmd.py`:
+- [X] T040 [P2] Implement `cl annotate` command group in `src/cl/cli/annotate_cmd.py`:
   - `cl annotate lead <offering_id> <person_id> [--designation lead|grade_responsible]`
   - `cl annotate involvement <offering_id> <classification>`
   - `cl annotate list [--offering <id>]`
@@ -230,32 +230,32 @@
 
 ### Query Integration with Annotations
 
-- [ ] T041 [P2] Update `get_my_timeline()` in `src/cl/ledger/queries.py`:
+- [X] T041 [P2] Update `get_my_timeline()` in `src/cl/ledger/queries.py`:
   - Join with InvolvementAnnotation
   - Return both observed_role and declared_involvement
   - Output clearly distinguishes observed vs declared
-- [ ] T042 [P2] Implement `get_offering_responsibility()` query in `src/cl/ledger/queries.py`:
+- [X] T042 [P2] Implement `get_offering_responsibility()` query in `src/cl/ledger/queries.py`:
   - Return Canvas-reported instructors (from UserEnrollment with role=teacher)
   - Return declared lead/grade-responsible (from LeadInstructorAnnotation)
   - Distinguish observed vs declared in output
-- [ ] T043 [P2] Implement `cl query offering <id> --instructors` command in `src/cl/cli/query_cmd.py`:
+- [X] T043 [P2] Implement `cl query offering <id> --instructors` command in `src/cl/cli/query_cmd.py`:
   - Show observed instructors and declared lead
   - Note: Full instructor list requires deep ingestion (Phase 3); for now, uses only UserEnrollment if user is instructor
 
 ### Annotation Survival Verification
 
-- [ ] T044 [P2] Write test for annotation persistence across re-ingestion in `tests/integration/test_annotation_survival.py`:
+- [X] T044 [P2] Write test for annotation persistence across re-ingestion in `tests/integration/test_annotation_survival.py`:
   - Add annotation
   - Run `cl ingest catalog`
   - Verify annotation still exists and unchanged
 
 ### Phase 2 Verification
 
-- [ ] T045 [P2] Write unit tests for annotation manager in `tests/unit/test_annotations.py`:
+- [X] T045 [P2] Write unit tests for annotation manager in `tests/unit/test_annotations.py`:
   - Test CRUD operations
   - Test validation (invalid offering)
   - Test list filtering
-- [ ] T046 [P2] Smoke check: Add annotation, query timeline, verify both observed and declared appear
+- [X] T046 [P2] Smoke check: Add annotation, query timeline, verify both observed and declared appear
 
 **Checkpoint**: Phase 2 complete. Declared truth layer is operational.
 

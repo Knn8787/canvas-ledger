@@ -178,7 +178,9 @@ class TestListMyCourses:
             ),
         ]
         mock_enrollments = [
-            MockEnrollment(enrollment_id=456, course_id=123, role="teacher", enrollment_state="active"),
+            MockEnrollment(
+                enrollment_id=456, course_id=123, role="teacher", enrollment_state="active"
+            ),
         ]
         mock_user = MockUser(courses=mock_courses, enrollments=mock_enrollments)
         mock_canvas.return_value.get_current_user.return_value = mock_user
@@ -212,8 +214,18 @@ class TestListMyCourses:
             ),
         ]
         mock_enrollments = [
-            MockEnrollment(enrollment_id=100, course_id=123, role="StudentEnrollment", enrollment_state="active"),
-            MockEnrollment(enrollment_id=101, course_id=123, role="TeacherEnrollment", enrollment_state="invited"),
+            MockEnrollment(
+                enrollment_id=100,
+                course_id=123,
+                role="StudentEnrollment",
+                enrollment_state="active",
+            ),
+            MockEnrollment(
+                enrollment_id=101,
+                course_id=123,
+                role="TeacherEnrollment",
+                enrollment_state="invited",
+            ),
         ]
         mock_user = MockUser(courses=mock_courses, enrollments=mock_enrollments)
         mock_canvas.return_value.get_current_user.return_value = mock_user
