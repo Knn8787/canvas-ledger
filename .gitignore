@@ -1,0 +1,7 @@
+# canvas-ledger project-specific ignores
+# (Python, IDE, OS patterns covered by global gitignore)
+
+# SQLite ledger database (user data, not committed)
+*.db
+*.sqlite
+*.sqlite3
