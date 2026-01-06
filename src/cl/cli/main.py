@@ -10,7 +10,7 @@ import typer
 from cl import __version__
 
 # Create main application
-app = typer.Typer(
+app: typer.Typer = typer.Typer(
     name="cl",
     help="canvas-ledger: A local, queryable ledger of Canvas LMS metadata.",
     no_args_is_help=True,
@@ -63,10 +63,13 @@ def cli_warning(message: str) -> None:
 
 # Import and register command groups
 # These imports are at the bottom to avoid circular imports
-from cl.cli import config_cmd, db_cmd  # noqa: E402
+from cl.cli import config_cmd, db_cmd, export_cmd, ingest_cmd, query_cmd  # noqa: E402
 
 app.add_typer(config_cmd.app, name="config")
 app.add_typer(db_cmd.app, name="db")
+app.add_typer(ingest_cmd.app, name="ingest")  # type: ignore[has-type]
+app.add_typer(query_cmd.app, name="query")  # type: ignore[has-type]
+app.add_typer(export_cmd.app, name="export")  # type: ignore[has-type]
 
 
 if __name__ == "__main__":

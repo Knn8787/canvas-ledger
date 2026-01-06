@@ -104,87 +104,87 @@
 
 ### SQLModel Models for Catalog
 
-- [ ] T021 [P1] Design and implement SQLModel models in `src/cl/ledger/models.py`:
+- [X] T021 [P1] Design and implement SQLModel models in `src/cl/ledger/models.py`:
   - `Term`: Canvas term metadata (canvas_term_id, name, start_date, end_date, observed_at)
   - `Offering`: Canvas course metadata (canvas_course_id, name, code, term_id FK, workflow_state, observed_at, last_seen_at)
   - `UserEnrollment`: User's own enrollment in offerings (canvas_enrollment_id, offering_id FK, role, enrollment_state, observed_at, last_seen_at)
   - Include observation timestamps and last_seen_at for idempotency
   - Review schema design before migration
 
-- [ ] T022 [P1] Create Alembic migration (002) for Term, Offering, UserEnrollment tables
+- [X] T022 [P1] Create Alembic migration (002) for Term, Offering, UserEnrollment tables
   - Add indexes on canvas_course_id, canvas_term_id
   - Review before committing
 
 ### Canvas API Client (Catalog Scope)
 
-- [ ] T023 [P1] Implement Canvas client foundation in `src/cl/canvas/client.py`:
+- [X] T023 [P1] Implement Canvas client foundation in `src/cl/canvas/client.py`:
   - Initialize `canvasapi.Canvas` with token from secret provider
   - Handle authentication errors with clear messages
   - Wrap API exceptions into cl-specific exceptions
-- [ ] T024 [P1] Implement `list_my_courses()` in `src/cl/canvas/client.py`:
+- [X] T024 [P1] Implement `list_my_courses()` in `src/cl/canvas/client.py`:
   - Fetch all courses visible to authenticated user (any role)
   - Handle pagination automatically
   - Return normalized dataclass/dict structures (not raw canvasapi objects)
-- [ ] T025 [P1] Implement `get_term()` in `src/cl/canvas/client.py`:
+- [X] T025 [P1] Implement `get_term()` in `src/cl/canvas/client.py`:
   - Fetch term details given term_id
   - Handle missing/null term gracefully
 
 ### Catalog Ingestion Logic
 
-- [ ] T026 [P1] Implement catalog ingestion in `src/cl/ledger/ingest.py`:
+- [X] T026 [P1] Implement catalog ingestion in `src/cl/ledger/ingest.py`:
   - Create `IngestRun` record with scope="catalog"
   - For each course: upsert Term, upsert Offering, upsert UserEnrollment
   - Update `last_seen_at` on existing records
   - Detect drift (changed name, code, state) — log but defer detailed drift recording to Phase 4
   - Update `IngestRun` with counts (new, updated, unchanged)
-- [ ] T027 [P1] Implement idempotency checks in ingestion:
+- [X] T027 [P1] Implement idempotency checks in ingestion:
   - Same Canvas data → no new observation, only `last_seen_at` update
   - Changed data → update record, log as "drift detected"
   - Test with repeated ingestion
 
 ### My Timeline Query
 
-- [ ] T028 [P1] Implement `get_my_timeline()` query in `src/cl/ledger/queries.py`:
+- [X] T028 [P1] Implement `get_my_timeline()` query in `src/cl/ledger/queries.py`:
   - Join Offering, Term, UserEnrollment
   - Return list of offerings with term name, user's role(s), dates
   - Sort by term start date (descending)
-- [ ] T029 [P1] Implement `cl query my-timeline` command in `src/cl/cli/query_cmd.py`:
+- [X] T029 [P1] Implement `cl query my-timeline` command in `src/cl/cli/query_cmd.py`:
   - Default: human-readable table output
   - `--format json` / `--format csv` options
   - Filter options: `--term`, `--role` (optional, can defer to later)
 
 ### Export Foundation
 
-- [ ] T030 [P1] Implement output formatters in `src/cl/export/formatters.py`:
+- [X] T030 [P1] Implement output formatters in `src/cl/export/formatters.py`:
   - `to_json(data)` → JSON string to stdout
   - `to_csv(data, headers)` → CSV with headers to stdout
   - `to_table(data, headers)` → human-readable table (simple, no external deps if possible)
-- [ ] T031 [P1] Implement `cl export offerings` command in `src/cl/cli/export_cmd.py`:
+- [X] T031 [P1] Implement `cl export offerings` command in `src/cl/cli/export_cmd.py`:
   - Export all offerings with term, code, name, workflow_state
   - `--format json|csv` (default: json)
 
 ### Ingest CLI Wiring
 
-- [ ] T032 [P1] Implement `cl ingest` command group in `src/cl/cli/ingest_cmd.py`:
+- [X] T032 [P1] Implement `cl ingest` command group in `src/cl/cli/ingest_cmd.py`:
   - `cl ingest catalog` — run catalog ingestion
   - `cl ingest status` — show last ingestion run details
   - Output: count summary (new/updated/unchanged)
 
 ### Phase 1 Verification
 
-- [ ] T033 [P1] Write unit tests for Canvas client in `tests/unit/test_canvas_client.py`:
+- [X] T033 [P1] Write unit tests for Canvas client in `tests/unit/test_canvas_client.py`:
   - Mock canvasapi responses
   - Test pagination handling
   - Test error handling
-- [ ] T034 [P1] Write unit tests for catalog ingestion in `tests/unit/test_ingest_catalog.py`:
+- [X] T034 [P1] Write unit tests for catalog ingestion in `tests/unit/test_ingest_catalog.py`:
   - Test idempotency (same data → no duplicates)
   - Test drift detection (changed data → updated)
   - Test IngestRun metadata
-- [ ] T035 [P1] Write integration test for my-timeline in `tests/integration/test_my_timeline.py`:
+- [X] T035 [P1] Write integration test for my-timeline in `tests/integration/test_my_timeline.py`:
   - Seed database with test data
   - Verify query returns expected structure
   - Verify JSON/CSV output formats
-- [ ] T036 [P1] Smoke check: `uv run cl ingest catalog && uv run cl query my-timeline --format json` succeeds with real Canvas API
+- [X] T036 [P1] Smoke check: `uv run cl ingest catalog && uv run cl query my-timeline --format json` succeeds with real Canvas API
   - Skip gracefully if `CANVAS_API_TOKEN` not configured; never log tokens
 
 **Checkpoint**: Phase 1 complete. User can see their involvement timeline from local data.
