@@ -1,0 +1,1 @@
+# Declared truth handling

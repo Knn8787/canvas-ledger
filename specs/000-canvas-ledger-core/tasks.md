@@ -21,74 +21,74 @@
 
 ### Project Structure
 
-- [ ] T001 [P0] Create project structure: `src/cl/` with subdirectories per plan (`cli/`, `canvas/`, `ledger/`, `annotations/`, `export/`, `config/`)
-- [ ] T002 [P0] Initialize `pyproject.toml` with Python 3.13+ requirement, Typer, SQLModel, Alembic, httpx, canvasapi, pytest dependencies
-- [ ] T003 [P0] Configure `uv` environment; add `.python-version` (3.13); ensure `uv sync` works
-- [ ] T004 [P] [P0] Add `.gitignore` for Python, uv, SQLite, editor files
-- [ ] T005 [P] [P0] Create `tests/` directory structure: `tests/unit/`, `tests/integration/`, `tests/fixtures/`
+- [X] T001 [P0] Create project structure: `src/cl/` with subdirectories per plan (`cli/`, `canvas/`, `ledger/`, `annotations/`, `export/`, `config/`)
+- [X] T002 [P0] Initialize `pyproject.toml` with Python 3.13+ requirement, Typer, SQLModel, Alembic, httpx, canvasapi, pytest dependencies
+- [X] T003 [P0] Configure `uv` environment; add `.python-version` (3.13); ensure `uv sync` works
+- [X] T004 [P] [P0] Add `.gitignore` for Python, uv, SQLite, editor files
+- [X] T005 [P] [P0] Create `tests/` directory structure: `tests/unit/`, `tests/integration/`, `tests/fixtures/`
 
 ### Configuration Module
 
-- [ ] T006 [P0] Design and implement config settings in `src/cl/config/settings.py`:
+- [X] T006 [P0] Design and implement config settings in `src/cl/config/settings.py`:
   - Canvas base URL (configurable)
   - Database path (default: `~/.local/share/cl/ledger.db`)
   - Config file location (default: `~/.config/cl/config.toml`)
   - Log level (default: warning)
-- [ ] T007 [P0] Implement pluggable secret provider interface in `src/cl/config/secrets.py`:
+- [X] T007 [P0] Implement pluggable secret provider interface in `src/cl/config/secrets.py`:
   - Abstract base for token retrieval
   - Environment variable fallback provider (`CANVAS_API_TOKEN`)
   - Stub for 1Password provider (implementation details TBD)
-- [ ] T008 [P0] Implement config file read/write using TOML in `src/cl/config/settings.py`
+- [X] T008 [P0] Implement config file read/write using TOML in `src/cl/config/settings.py`
   - Tokens MUST NOT be stored in config file
   - Validate required fields on load
 
 ### Database Foundation
 
-- [ ] T009 [P0] Initialize Alembic in `src/cl/migrations/`:
+- [X] T009 [P0] Initialize Alembic in `src/cl/migrations/`:
   - Configure `alembic.ini` and `env.py` for SQLModel metadata
   - SQLite operational defaults (WAL, FK, busy timeout) configured in `store.py` at runtime, not here
-- [ ] T010 [P0] Design and implement initial SQLModel models for `IngestRun` in `src/cl/ledger/models.py`:
+- [X] T010 [P0] Design and implement initial SQLModel models for `IngestRun` in `src/cl/ledger/models.py`:
   - Track ingestion runs (id, started_at, completed_at, scope, status, counts)
   - This is the only model needed in Phase 0
-- [ ] T011 [P0] Create baseline Alembic migration (001) for `ingest_run` table
+- [X] T011 [P0] Create baseline Alembic migration (001) for `ingest_run` table
   - Review schema before committing
 
 ### Persistence Layer Setup
 
-- [ ] T012 [P0] Implement database connection and session management in `src/cl/ledger/store.py`:
+- [X] T012 [P0] Implement database connection and session management in `src/cl/ledger/store.py`:
   - `get_engine()` with SQLite configuration
   - Configure recommended operational defaults (WAL mode, FK enforcement, busy timeout); these may evolve
   - `get_session()` context manager
   - Auto-backup before migrations
-- [ ] T013 [P0] Implement migration runner in `src/cl/ledger/store.py`:
+- [X] T013 [P0] Implement migration runner in `src/cl/ledger/store.py`:
   - Check current version
   - Run pending migrations
   - Report migration status
 
 ### CLI Skeleton
 
-- [ ] T014 [P0] Create Typer application root in `src/cl/cli/main.py`:
+- [X] T014 [P0] Create Typer application root in `src/cl/cli/main.py`:
   - Main `app` with version flag
   - Error handling (stderr, exit codes)
-- [ ] T015 [P0] Implement `cl config` command group in `src/cl/cli/config_cmd.py`:
+- [X] T015 [P0] Implement `cl config` command group in `src/cl/cli/config_cmd.py`:
   - `cl config init` — interactive or flag-based initialization
   - `cl config show` — display config with redacted secrets
   - `cl config set <key> <value>` — update config value
-- [ ] T016 [P0] Implement `cl db` command group in `src/cl/cli/db_cmd.py`:
+- [X] T016 [P0] Implement `cl db` command group in `src/cl/cli/db_cmd.py`:
   - `cl db migrate` — run pending migrations (with backup)
   - `cl db status` — show migration state and DB info
-- [ ] T017 [P0] Wire CLI entry point in `pyproject.toml` (`[project.scripts]` → `cl = "cl.cli.main:app"`)
+- [X] T017 [P0] Wire CLI entry point in `pyproject.toml` (`[project.scripts]` → `cl = "cl.cli.main:app"`)
 
 ### Phase 0 Verification
 
-- [ ] T018 [P0] Write unit tests for config module in `tests/unit/test_config.py`:
+- [X] T018 [P0] Write unit tests for config module in `tests/unit/test_config.py`:
   - Test TOML read/write
   - Test secret provider fallback
   - Test default values
-- [ ] T019 [P0] Write integration test for database setup in `tests/integration/test_db_setup.py`:
+- [X] T019 [P0] Write integration test for database setup in `tests/integration/test_db_setup.py`:
   - Test migration from empty database
   - Test `cl db status` output
-- [ ] T020 [P0] Smoke check: `uv run cl config init && uv run cl db migrate && uv run cl db status` succeeds
+- [X] T020 [P0] Smoke check: `uv run cl config init && uv run cl db migrate && uv run cl db status` succeeds
 
 **Checkpoint**: Phase 0 complete. CLI runs, config works, database initializes.
 

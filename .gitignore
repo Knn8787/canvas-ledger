@@ -1,7 +1,59 @@
-# canvas-ledger project-specific ignores
-# (Python, IDE, OS patterns covered by global gitignore)
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# SQLite ledger database (user data, not committed)
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# uv
+uv.lock
+
+# SQLite databases (user data, not committed)
 *.db
 *.sqlite
 *.sqlite3
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+.mypy_cache/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment variables (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Local config (user-specific paths)
+*.local.toml
