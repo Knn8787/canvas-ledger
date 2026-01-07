@@ -60,3 +60,6 @@ Thumbs.db
 
 # MkDocs build output
 mkdocs/site/
+
+# Development session logs (local only)
+docs/sessions/

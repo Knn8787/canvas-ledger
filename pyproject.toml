@@ -3,6 +3,7 @@ name = "cl"
 version = "0.1.0"
 description = "A local, queryable ledger of Canvas LMS metadata for historical analysis"
 readme = "README.md"
+license = "MIT"
 authors = [
     { name = "Dan O'Leary", email = "oleary.dj@gmail.com" }
 ]

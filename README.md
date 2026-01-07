@@ -2,6 +2,9 @@
 
 A local, queryable ledger of Canvas LMS metadata. Maintains a durable historical record of your Canvas involvement for answering questions that Canvas cannot easily answer.
 
+[![Documentation](https://img.shields.io/badge/docs-olearydj.github.io%2Fcanvas--ledger-blue)](https://olearydj.github.io/canvas-ledger/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Features
 
 - **Local ledger**: All data stored locally in SQLite - no cloud dependencies after ingestion
@@ -20,7 +23,7 @@ A local, queryable ledger of Canvas LMS metadata. Maintains a durable historical
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/canvas-ledger.git
+git clone https://github.com/olearydj/canvas-ledger.git
 cd canvas-ledger
 
 # Install dependencies with uv
